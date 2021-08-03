@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  snyk: snyk/snyk@0.0.11
+  snyk: snyk/snyk@1.0.2
 
 jobs:
   build:
@@ -24,12 +24,26 @@ jobs:
       #     name: Snyk Monitor
       #     command: |
       #       ./snyk monitor --all-projects
-  
+
       - snyk/scan:
           severity-threshold: high
           fail-on-issues: false
-          monitor-on-build: true
+          additional-arguments: --all-projects --json-file-output=snyk-out.json
+          monitor-on-build: false
+
+      - snyk/scan:
+          command: monitor
           additional-arguments: --all-projects
+
+      - run:
+          name: See output
+          command: |
+            ls -la
+            cat snyk-out.json
+          
+      # - snyk/scan:
+      #     command: monitor
+      #     additional-arguments: --all-projects
   
 workflows:
   version: 2

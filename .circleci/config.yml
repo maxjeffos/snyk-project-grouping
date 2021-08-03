@@ -1,0 +1,29 @@
+
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:lts
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install Snyk CLI
+          command: |
+            curl -Lo ./snyk https://static.snyk.io/cli/latest/snyk-linux
+            chmod a+x ./snyk
+      # - run:
+      #     name: Test with Snyk
+      #     command: |
+      #       ./snyk test --all-projects
+      - run:
+          name: Snyk Monitor
+          command: |
+            ./snyk monitor --all-projects
+  
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
